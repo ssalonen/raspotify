@@ -24,7 +24,7 @@ all three revisions of the Pi, immediately after installation.
 ## Download Latest Version
 
 Head on over to the [releases](https://github.com/dtcooper/raspotify/releases/latest)
-page to download themost recent version and install the Debian package. Or follow
+page to download the most recent version and install the Debian package. Or follow
 the [directions below](#easy-installation).
 
 ### Requirements
@@ -38,6 +38,7 @@ Raspotify should work on _any_ Pi but it has been tested on,
 * Raspberry Pi (v1) model B
 * Raspberry Pi 2 model B
 * Raspberry Pi 3 model B and B+
+* Raspberry Pi 4
 
 ### Easy Installation
 
@@ -75,6 +76,49 @@ here ([`raspotify-latest.deb`](https://dtcooper.github.io/raspotify/raspotify-la
 wget https://dtcooper.github.io/raspotify/raspotify-latest.deb
 sudo dpkg -i raspotify-latest.deb
 ```
+
+### Play via Bluetooth Speaker
+
+#### via asound.conf
+
+1. Edit `/etc/asound.conf`:
+`> vim /etc/asound.conf
+
+2. Add your bluetooth MAC adresss instead of `XX:XX:XX:XX:XX`:
+
+```
+defaults.bluealsa.interface "hci0"
+defaults.bluealsa.device "XX:XX:XX:XX:XX"
+defaults.bluealsa.profile "a2dp"
+
+pcm.btheadset {
+    type plug
+    slave {
+        pcm {
+              type bluealsa
+              device XX:XX:XX:XX:XX:XX 
+              profile "auto"
+         }   
+    }   
+    hint {
+         show on
+         description "BT Headset"
+    }   
+}
+ctl.btheadset {
+    type bluetooth
+} 
+```
+
+3. Restart service:
+
+`> sudo service raspotify restart`
+
+####  via pi-btaudio
+
+Another way to resolve any issues to install `pi-btaudio` alongside with `raspotify`: https://github.com/bablokb/pi-btaudio
+(remove pulseaudio if you have it).
+
 
 ### Uninstalling
 
@@ -131,6 +175,11 @@ which passes arguments to [librespot](https://github.com/librespot-org/librespot
 # Backend could be set to pipe here, but it's for very advanced use cases of
 # librespot, so you shouldn't need to change this under normal circumstances.
 #BACKEND_ARGS="--backend alsa"
+
+# The displayed device type in Spotify clients. 
+# Can be "unknown", "computer", "tablet", "smartphone", "speaker", "tv",
+# "avr" (Audio/Video Receiver), "stb" (Set-Top Box), and "audiodongle".
+#DEVICE_TYPE="speaker"
 ```
 
 After editing restart the daemon by running: `sudo systemctl restart raspotify`
@@ -203,6 +252,12 @@ instead, but there's no public address for those folks.)
 ## Final Note
 
 _...and remember kids, have fun!_
+
+## Disclaimer
+
+Per librespot's disclaimer, using librespot &mdash; the underlying library behind
+raspotify &mdash; to connect to Spotify's API _"is probably forbidden by them."_
+We've not received word about that, however use at your own risk.
 
 ## License
 
