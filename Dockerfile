@@ -13,13 +13,13 @@ RUN apt-get update \
         gnupg \
         pandoc \
         pkg-config \
-        python-pip \
-        python-setuptools \
-        python-wheel \
+        python3-pip \
+        python3-setuptools \
+        python3-wheel \
         reprepro \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip install \
+RUN pip3 install \
         jinja2-cli  \
         unidecode
 
